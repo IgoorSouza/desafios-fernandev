@@ -1,0 +1,14 @@
+.container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container div {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+}
+
+.container img {
+  width: 48px;
+  margin-right: 20px;
+}
