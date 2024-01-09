@@ -142,7 +142,7 @@ function App() {
               />
             </table>
           ) : (
-            <div colSpan="5" className="placeholder">
+            <div className="placeholder">
               <h3>Seu carrinho está vazio.</h3>
             </div>
           )}
