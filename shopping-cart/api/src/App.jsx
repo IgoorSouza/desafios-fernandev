@@ -14,26 +14,6 @@ function App() {
   const [purchases, setPurchases] = useState([]);
   const [coupons, setCoupons] = useState([]);
 
-  // Cupons: (Adicionar pelo Insomnia)
-  //   {
-  //     "name": "cupom123",
-  //     "discountValue": 10,
-  //     "available": true
-  //   },
-
-  //   {
-  //     "name": "desconto15",
-  //     "discountValue": 15,
-  //     "available": false
-  //   },
-
-  //   {
-  //     "name":"shopping",
-  //     "discountValue": 30,
-  //     "available": true,
-  //     "minPurchaseValue": 1000
-  //   }
-
   const [currentCoupon, setCurrentCoupon] = useState({});
   const [purchasesInterface, setPurchasesInterface] = useState(false);
   const [couponInterface, setCouponInterface] = useState(false);
