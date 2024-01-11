@@ -1,0 +1,2 @@
+Devido ao limite máximo de requisições permitidas pelo CrudCrud, a API não está mais funcionando.
+Entretanto, caso deseje testar o código, basta acessar o site <a href="https://crudcrud.com/">crudcrud.com</a>, copiar o link da API fornecida pelo site e substituir o link no arquivo provider.js (src/provider.js).
