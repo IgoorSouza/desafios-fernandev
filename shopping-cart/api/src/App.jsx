@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { api } from "./provider";
 import ProductList from "./components/ProductList";
 import Summary from "./components/Summary";
-import PurchasesInterface from "./components/PurchasesInterface";
 import CouponInterface from "./components/CouponInterface";
+import PurchasesInterface from "./components/PurchasesInterface";
 
 function randomNumber(min, max) {
   return (Math.random() * (max - min) + min).toFixed(2);
@@ -13,7 +13,6 @@ function App() {
   const [products, setProducts] = useState([]);
   const [purchases, setPurchases] = useState([]);
   const [coupons, setCoupons] = useState([]);
-
   const [currentCoupon, setCurrentCoupon] = useState({});
   const [purchasesInterface, setPurchasesInterface] = useState(false);
   const [couponInterface, setCouponInterface] = useState(false);

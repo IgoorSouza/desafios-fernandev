@@ -1,27 +1,38 @@
-import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-export default function CouponInterface(props) {
-  const [subtotal, setSubtotal] = useState(0);
+export default function CouponInterface() {
+  const coupons = useSelector((state) => {
+    return state.allReducers.couponsReducer;
+  });
 
-  useEffect(() => {
-    let purchaseSubtotal = 0;
+  const couponsInterface = useSelector((state) => {
+    return state.allReducers.couponsInterfaceReducer;
+  });
 
-    props.products.map((product) => {
-      purchaseSubtotal += product.price * product.quantity;
-    });
+  const subtotal = useSelector((state) => {
+    return state.allReducers.purchaseSubtotalReducer;
+  });
 
-    setSubtotal(purchaseSubtotal);
-  }, [props.products]);
+  const dispatch = useDispatch();
 
-  return props.couponInterface ? (
+  function applyCoupon(coupon) {
+    if (!coupon.minPurchaseValue || subtotal >= coupon.minPurchaseValue) {
+      dispatch({ type: "applyCoupon", payload: coupon });
+      dispatch({ type: "toggleCouponsInterface" });
+    }
+  }
+
+  return couponsInterface ? (
     <div className="couponInterfaceContainer">
       <div className="couponInterface">
-        <button className="closeCoupons" onClick={props.handleCouponInterface}>
+        <button
+          className="closeCoupons"
+          onClick={() => dispatch({ type: "toggleCouponsInterface" })}
+        >
           X
         </button>
 
-        {props.coupons.length === 0 ? (
+        {coupons.length === 0 ? (
           <div className="couponPlaceholder">
             <h3>Nenhum cupom disponível.</h3>
           </div>
@@ -29,18 +40,18 @@ export default function CouponInterface(props) {
           <div className="couponList">
             <h3>Selecione um cupom para aplicar: </h3>
             <h4>(Cada cupom pode ser utilizado apenas uma vez.)</h4>
-            {props.coupons.map((coupon, index) => {
+            {coupons.map((coupon, index) => {
               return (
                 <div
                   key={index}
                   className="coupon"
-                  onClick={() => props.applyCoupon(index, subtotal)}
+                  onClick={() => applyCoupon(coupon)}
                 >
                   <h3>{coupon.name}</h3>
                   <p>{coupon.discountValue}% de desconto</p>
                   {coupon.minPurchaseValue ? (
                     <span>
-                      Cupom válido apenas para compras acima de R$
+                      Cupom válido apenas para compras acima de R${" "}
                       {coupon.minPurchaseValue}
                     </span>
                   ) : null}
@@ -53,11 +64,3 @@ export default function CouponInterface(props) {
     </div>
   ) : null;
 }
-
-CouponInterface.propTypes = {
-  coupons: PropTypes.array,
-  applyCoupon: PropTypes.func,
-  couponInterface: PropTypes.bool,
-  handleCouponInterface: PropTypes.func,
-  products: PropTypes.array,
-};
