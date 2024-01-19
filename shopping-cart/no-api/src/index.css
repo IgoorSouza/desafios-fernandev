@@ -42,7 +42,7 @@ body button:hover {
 }
 
 .cart > div:first-of-type {
-  width: 100%;
+  width: 70%;
 }
 
 .cart > div:first-of-type button:first-of-type {
@@ -50,7 +50,7 @@ body button:hover {
 }
 
 .products {
-  width: 90%;
+  width: 100%;
   text-align: center;
 }
 
