@@ -1,0 +1,25 @@
+{
+  "cart": [],
+  "purchases": [],
+  "coupons": [
+    {
+      "id": "1",
+      "name": "cupom123",
+      "discountValue": 10,
+      "used": false
+    },
+    {
+      "id": "2",
+      "name": "desconto15",
+      "discountValue": 15,
+      "used": false
+    },
+    {
+      "id": "3",
+      "name": "shopping",
+      "discountValue": 30,
+      "used": false,
+      "minPurchaseValue": 1000
+    }
+  ]
+}

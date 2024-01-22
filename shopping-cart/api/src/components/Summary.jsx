@@ -1,30 +1,80 @@
+import { api } from "../provider";
 import { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import { useSelector, useDispatch } from "react-redux";
 
-export default function Summary({
-  products,
-  currentCoupon,
-  finalizePurchase,
-  handleCouponInterface,
-}) {
-  const [subtotal, setSubtotal] = useState(0);
+export default function Summary() {
+  const products = useSelector((state) => {
+    return state.allReducers.productsReducer;
+  });
+
+  const purchases = useSelector((state) => {
+    return state.allReducers.purchasesReducer;
+  });
+
+  const currentCoupon = useSelector((state) => {
+    return state.allReducers.currentCouponReducer;
+  });
+
+  const subtotal = useSelector((state) => {
+    return state.allReducers.purchaseSubtotalReducer;
+  });
+
   const [total, setTotal] = useState(0);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     let purchaseValue = 0;
-    products.map((item) => {
-      purchaseValue += item.price * item.quantity;
+
+    products.map((product) => {
+      purchaseValue += product.price * product.quantity;
     });
 
-    setSubtotal(parseFloat(purchaseValue.toFixed(2)));
+    dispatch({
+      type: "updateSubtotal",
+      payload: parseFloat(purchaseValue.toFixed(2)),
+    });
 
-    if (currentCoupon.name) {
+    if (currentCoupon != null) {
       purchaseValue =
         purchaseValue - (purchaseValue / 100) * currentCoupon.discountValue;
 
       setTotal(parseFloat(purchaseValue.toFixed(2)));
     }
+
+    if (products == []) setTotal(0);
   }, [products, currentCoupon]);
+
+  function finalizePurchase() {
+    let newPurchase = {
+      products,
+      value: total != 0 ? total : subtotal,
+    };
+
+    if (currentCoupon != null) {
+      newPurchase.coupon = currentCoupon;
+
+      dispatch({ type: "clearCurrentCoupon" });
+      api.put("/coupons/" + currentCoupon.id, {...currentCoupon, used: true})
+    }
+
+    dispatch({ type: "updatePurchases", payload: [...purchases, newPurchase] });
+    dispatch({ type: "updateProducts", payload: [] });
+
+    api.post("/purchases", newPurchase);
+
+    api.get("/cart/").then((res) => {
+      res.data.map((product) => {
+        api.delete("/cart/" + product.id);
+      });
+    });
+
+    window.alert("Compra finalizada.");
+  }
+
+  function toggleCouponsInterface() {
+    dispatch({ type: "toggleCouponsInterface" });
+  }
 
   return (
     <div className="summary">
@@ -45,8 +95,8 @@ export default function Summary({
               <span>Gratuito</span>
             </div>
 
-            <span className="discountCoupon" onClick={handleCouponInterface}>
-              {currentCoupon.name
+            <span className="discountCoupon" onClick={toggleCouponsInterface}>
+              {currentCoupon != null
                 ? `Cupom aplicado: ${currentCoupon.name}`
                 : "Adicionar cupom de desconto"}
             </span>
@@ -55,25 +105,13 @@ export default function Summary({
 
         <div className="total">
           <span>Total</span>
-          <span>R$ {currentCoupon.name ? total : subtotal}</span>
+          <span>R$ {currentCoupon != null ? total : subtotal}</span>
         </div>
       </div>
 
-      <button
-        disabled={products.length === 0}
-        onClick={() => {
-          finalizePurchase(currentCoupon.name ? total : subtotal);
-        }}
-      >
+      <button disabled={products.length === 0} onClick={finalizePurchase}>
         FINALIZAR COMPRA
       </button>
     </div>
   );
 }
-
-Summary.propTypes = {
-  products: PropTypes.array,
-  handleCouponInterface: PropTypes.func,
-  finalizePurchase: PropTypes.func,
-  currentCoupon: PropTypes.object,
-};

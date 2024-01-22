@@ -1,16 +1,33 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
+import { api } from "../provider";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function PurchasesInterface({
-  purchases,
-  purchasesInterface,
-  handlePurchasesInterface,
-}) {
+export default function PurchasesInterface() {
+  const purchases = useSelector((state) => {
+    return state.allReducers.purchasesReducer;
+  });
+
+  const purchasesInterface = useSelector((state) => {
+    return state.allReducers.purchasesInterfaceReducer;
+  });
+
   const [purchaseDetails, setPurchaseDetails] = useState(null);
+
+  const dispatch = useDispatch();
+
+  function fetchPurchases() {
+    api.get("/purchases").then((res) => {
+      dispatch({ type: "updatePurchases", payload: res.data });
+    });
+  }
 
   function seePurchase(purchase) {
     setPurchaseDetails(purchase);
   }
+
+  useEffect(() => {
+    fetchPurchases();
+  }, []);
 
   return purchasesInterface ? (
     <div className="purchasesInterfaceContainer">
@@ -18,7 +35,7 @@ export default function PurchasesInterface({
         <button
           className="closePurchases"
           onClick={() => {
-            handlePurchasesInterface();
+            dispatch({ type: "togglePurchasesInterface" });
             setPurchaseDetails(null);
           }}
         >
@@ -80,9 +97,3 @@ export default function PurchasesInterface({
     </div>
   ) : null;
 }
-
-PurchasesInterface.propTypes = {
-  handlePurchasesInterface: PropTypes.func,
-  purchasesInterface: PropTypes.bool,
-  purchases: PropTypes.array,
-};
