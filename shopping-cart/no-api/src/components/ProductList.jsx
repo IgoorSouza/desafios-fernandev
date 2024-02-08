@@ -18,9 +18,10 @@ export default function ProductList() {
     dispatch({ type: "addProduct", payload: newProduct });
   }
 
-  function removeProduct(product) {
-    let newProducts = [...products];
-    newProducts.splice(product, 1);
+  function removeProduct(productToRemove) {
+    const newProducts = products.filter((product, index) => {
+      return index !== productToRemove;
+    });
 
     dispatch({ type: "removeProduct", payload: newProducts });
   }

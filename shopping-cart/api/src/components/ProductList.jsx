@@ -17,20 +17,24 @@ export default function ProductList() {
 
   function addProduct() {
     let newProduct = {
+      id: crypto.randomUUID(),
       name: `Produto ${products.length + 1}`,
       price: (Math.random() * 1000).toFixed(2),
       quantity: 1,
     };
 
-    api.post("/cart", newProduct)
+    api.post("/cart", newProduct);
     dispatch({ type: "updateProducts", payload: [...products, newProduct] });
   }
 
-  function removeProduct(product) {
-    let newProducts = [...products];
-    let removedProduct = newProducts.splice(product, 1);
+  function removeProduct(productToRemove) {
+    const newProducts = products.filter((product, index) => {
+      return index !== productToRemove;
+    });
 
-    api.delete(`/cart/${removedProduct[0].id}`)
+    let removedProduct = products[productToRemove];
+
+    api.delete(`/cart/${removedProduct.id}`);
     dispatch({ type: "updateProducts", payload: newProducts });
   }
 
@@ -46,13 +50,13 @@ export default function ProductList() {
     const newProducts = [...products];
     newProducts[products.indexOf(product)] = newProduct;
 
-    api.put("/cart/" + product.id, newProduct)
+    api.put("/cart/" + product.id, newProduct);
     dispatch({ type: "updateProducts", payload: newProducts });
   }
 
   useEffect(() => {
-    fetchProducts()
-  }, [])
+    fetchProducts();
+  }, []);
 
   return products.length > 0 ? (
     <div>
